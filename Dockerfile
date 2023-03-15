@@ -1,4 +1,4 @@
-FROM rust:1.66.0 AS builder
+FROM rust:1.68.0 AS builder
 WORKDIR /usr/src
 
 RUN cargo new udp-flare
