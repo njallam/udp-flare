@@ -14,8 +14,6 @@ fn listen(expected: &[u8]) -> io::Result<()> {
         if buf.starts_with(expected) {
             println!("Got needle from {} - responding", src);
             socket.send_to(REPLY, &src)?;
-            socket.send_to(REPLY, &src)?;
-            socket.send_to(REPLY, &src)?;
         } else {
             println!("Got junk from {}", src);
         }
