@@ -2,9 +2,8 @@ use std::{env, io, net::UdpSocket};
 
 const LISTEN_ADDRESS: &str = "0.0.0.0:34255";
 const MAX_INPUT_LENGTH: usize = 20;
-const REPLY: &[u8] = "helloworld".as_bytes();
 
-fn listen(expected: &[u8]) -> io::Result<()> {
+fn listen(expected: &[u8], reply: &[u8]) -> io::Result<()> {
     let socket = UdpSocket::bind(LISTEN_ADDRESS)?;
     println!("Listening on {}", LISTEN_ADDRESS);
     let mut buf = [0; MAX_INPUT_LENGTH];
@@ -13,7 +12,7 @@ fn listen(expected: &[u8]) -> io::Result<()> {
         let buf = &mut buf[..amt];
         if buf.starts_with(expected) {
             println!("Got needle from {} - responding", src);
-            socket.send_to(REPLY, &src)?;
+            socket.send_to(reply, &src)?;
         } else {
             println!("Got junk from {}", src);
         }
@@ -26,5 +25,6 @@ fn main() -> io::Result<()> {
         eprintln!("UDP_FLARE_INPUT is too long");
         return Err(io::Error::from_raw_os_error(22));
     }
-    listen(expected.as_bytes())
+    let reply = env::var("UDP_FLARE_REPLY").unwrap_or(String::from("helloworld"));
+    listen(expected.as_bytes(), reply.as_bytes())
 }
